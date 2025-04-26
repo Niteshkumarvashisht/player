@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Simple Music Player with Timestamp</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 50px;
+      background: #f0f0f0;
+    }
+    #audio {
+      display: none; /* Hide default audio controls */
+    }
+    .controls {
+      margin-top: 30px;
+    }
+    button {
+      margin: 10px;
+      padding: 12px 25px;
+      font-size: 18px;
+      border: none;
+      border-radius: 8px;
+      background-color: #4CAF50;
+      color: white;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    #song-name {
+      margin-top: 20px;
+      font-size: 20px;
+    }
+    #timestamp {
+      margin-top: 15px;
+      font-size: 18px;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Custom Music Player 🎶</h1>
+  <h2 id="song-name"></h2>
+  
+  <audio id="audio"></audio> <!-- no controls -->
+
+  <div class="controls">
+    <button onclick="prevSong()">⏮ Prev</button>
+    <button onclick="playPause()" id="playPauseBtn">▶️ Play</button>
+    <button onclick="nextSong()">⏭ Next</button>
+  </div>
+
+  <div id="timestamp">00:00 / 00:00</div>
+
+  <script>
+    const musicFiles = [
+      { name: "BUNT., Mapei - TRIPPIN.mp3", link: "./BUNT., Mapei - TRIPPIN.mp3" },
+      { name: "Fred again.. & Baby Keem - leavemealone.mp3", link: "./Fred again.. & Baby Keem - leavemealone.mp3" },
+      { name: "ODESZA - A Moment Apart.mp3", link: "./ODESZA - A Moment Apart.mp3" },
+      { name: "ytmp3free.cc_baby-again-youtubemp3free.org.mp3", link: "./ytmp3free.cc_baby-again-youtubemp3free.org.mp3" },
+      { name: "ytmp3free.cc_tisto-1035-feat-tate-mcrae-official-music-video-youtubemp3free.org.mp3", link: "./ytmp3free.cc_tisto-1035-feat-tate-mcrae-official-music-video-youtubemp3free.org.mp3" }
+    ];
+
+    let currentIndex = 0;
+    const audio = document.getElementById('audio');
+    const songName = document.getElementById('song-name');
+    const playPauseBtn = document.getElementById('playPauseBtn');
+    const timestamp = document.getElementById('timestamp');
+
+    function loadSong(index) {
+      audio.src = musicFiles[index].link;
+      songName.textContent = musicFiles[index].name;
+      audio.play();
+      playPauseBtn.innerHTML = "⏸️ Pause";
+    }
+
+    function playPause() {
+      if (audio.paused) {
+        audio.play();
+        playPauseBtn.innerHTML = "⏸️ Pause";
+      } else {
+        audio.pause();
+        playPauseBtn.innerHTML = "▶️ Play";
+      }
+    }
+
+    function nextSong() {
+      currentIndex = (currentIndex + 1) % musicFiles.length;
+      loadSong(currentIndex);
+    }
+
+    function prevSong() {
+      currentIndex = (currentIndex - 1 + musicFiles.length) % musicFiles.length;
+      loadSong(currentIndex);
+    }
+
+    function formatTime(seconds) {
+      const minutes = Math.floor(seconds / 60);
+      const secs = Math.floor(seconds % 60);
+      return `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }
+
+    // Update timestamp every second
+    audio.addEventListener('timeupdate', () => {
+      const current = formatTime(audio.currentTime);
+      const duration = isNaN(audio.duration) ? "00:00" : formatTime(audio.duration);
+      timestamp.textContent = `${current} / ${duration}`;
+    });
+
+    audio.addEventListener('ended', () => {
+      nextSong();
+    });
+
+    // Load first song initially
+    loadSong(currentIndex);
+  </script>
+
+</body>
+</html>
